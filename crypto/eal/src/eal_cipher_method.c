@@ -59,6 +59,9 @@
 #ifdef HITLS_CRYPTO_OFB
 #include "crypt_modes_ofb.h"
 #endif
+#ifdef HITLS_CRYPTO_HCTR
+#include "crypt_modes_hctr.h"
+#endif
 #include "eal_common.h"
 #include "bsl_sal.h"
 
@@ -159,6 +162,18 @@ static const EAL_CipherMethod OFB_METHOD = {
 };
 #endif
 
+#ifdef HITLS_CRYPTO_HCTR
+static const EAL_CipherMethod HCTR_METHOD = {
+    (CipherNewCtx)MODES_HCTR_NewCtxEx,
+    (CipherInitCtx)MODES_HCTR_InitCtxEx,
+    (CipherDeInitCtx)MODES_HCTR_DeInitCtx,
+    (CipherUpdate)MODES_HCTR_Update,
+    (CipherFinal)MODES_HCTR_Final,
+    (CipherCtrl)MODES_HCTR_Ctrl,
+    (CipherFreeCtx)MODES_HCTR_FreeCtx
+};
+#endif
+
 #ifdef HITLS_CRYPTO_XTS
 static const EAL_CipherMethod XTS_METHOD = {
     (CipherNewCtx)MODES_XTS_NewCtxEx,
@@ -209,6 +224,10 @@ const EAL_CipherMethod *EAL_FindModeMethod(CRYPT_MODE_AlgId id)
 #ifdef HITLS_CRYPTO_OFB
         case CRYPT_MODE_OFB:
             return &OFB_METHOD;
+#endif
+#ifdef HITLS_CRYPTO_HCTR
+        case CRYPT_MODE_HCTR:
+            return &HCTR_METHOD;
 #endif
         default:
             return NULL;
@@ -284,6 +303,9 @@ static const EAL_SymAlgMap SYM_ID_MAP[] = {
 #endif
 #ifdef HITLS_CRYPTO_CCM
     {.id = CRYPT_CIPHER_SM4_CCM, .modeId = CRYPT_MODE_CCM },
+#endif
+#ifdef HITLS_CRYPTO_HCTR
+    {.id = CRYPT_CIPHER_SM4_HCTR, .modeId = CRYPT_MODE_HCTR },
 #endif
 #endif // sm4
 };
@@ -394,6 +416,7 @@ const EAL_SymMethod *EAL_GetSymMethod(int32_t algId)
         case CRYPT_CIPHER_SM4_CFB:
         case CRYPT_CIPHER_SM4_OFB:
         case CRYPT_CIPHER_SM4_CCM:
+        case CRYPT_CIPHER_SM4_HCTR:
             return &SM4_METHOD;
 #endif
 #ifdef HITLS_CRYPTO_CHACHA20
@@ -471,6 +494,9 @@ static CRYPT_CipherInfo g_cipherInfo[] = {
 #endif
 #ifdef HITLS_CRYPTO_OFB
     {.id = CRYPT_CIPHER_SM4_OFB, .blockSize = 1, .keyLen = 16, .ivLen = 16},
+#endif
+#ifdef HITLS_CRYPTO_HCTR
+    {.id = CRYPT_CIPHER_SM4_HCTR, .blockSize = 16, .keyLen = 16, .ivLen = 16},
 #endif
 #endif
 };

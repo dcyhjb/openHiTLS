@@ -85,6 +85,9 @@ static const CRYPT_EAL_AlgInfo g_smCiphers[] = {
     {CRYPT_CIPHER_SM4_GCM, g_smGcm, CRYPT_EAL_SM_ATTR},
     {CRYPT_CIPHER_SM4_CFB, g_smCfb, CRYPT_EAL_SM_ATTR},
     {CRYPT_CIPHER_SM4_OFB, g_smOfb, CRYPT_EAL_SM_ATTR},
+#ifdef HITLS_CRYPTO_HCTR
+    {CRYPT_CIPHER_SM4_HCTR, g_smHctr, CRYPT_EAL_SM_ATTR},
+#endif
     CRYPT_EAL_ALGINFO_END
 };
 
