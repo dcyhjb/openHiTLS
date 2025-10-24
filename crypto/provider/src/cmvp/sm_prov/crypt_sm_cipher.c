@@ -24,6 +24,9 @@
 #include "crypt_modes_ofb.h"
 #include "crypt_modes_cfb.h"
 #include "crypt_modes_xts.h"
+#ifdef HITLS_CRYPTO_HCTR
+#include "crypt_modes_hctr.h"
+#endif
 #include "crypt_local_types.h"
 #include "crypt_errno.h"
 #include "bsl_err_internal.h"
@@ -46,6 +49,9 @@ static void *CRYPT_EAL_SmCipherNewCtx(CRYPT_EAL_SmProvCtx *provCtx, int32_t algI
         {CRYPT_CIPHER_SM4_GCM, MODES_GCM_NewCtxEx},
         {CRYPT_CIPHER_SM4_CFB, MODES_CFB_NewCtxEx},
         {CRYPT_CIPHER_SM4_OFB, MODES_OFB_NewCtxEx},
+#ifdef HITLS_CRYPTO_HCTR
+        {CRYPT_CIPHER_SM4_HCTR, MODES_HCTR_NewCtxEx},
+#endif
     };
     for (size_t i = 0; i < sizeof(cipherNewCtxFunc)/sizeof(cipherNewCtxFunc[0]); i++) {
         if (cipherNewCtxFunc[i].id == algId) {
@@ -143,6 +149,20 @@ const CRYPT_EAL_Func g_smXts[] = {
     {CRYPT_EAL_IMPLCIPHER_DEINITCTX, (CRYPT_EAL_ImplCipherDeinitCtx)MODES_XTS_DeInitCtx},
     {CRYPT_EAL_IMPLCIPHER_CTRL, (CRYPT_EAL_ImplCipherCtrl)MODES_XTS_Ctrl},
     {CRYPT_EAL_IMPLCIPHER_FREECTX, (CRYPT_EAL_ImplCipherFreeCtx)MODES_XTS_FreeCtx},
+#endif
+    CRYPT_EAL_FUNC_END,
+};
+
+
+const CRYPT_EAL_Func g_smHctr[] = {
+#ifdef HITLS_CRYPTO_HCTR
+    {CRYPT_EAL_IMPLCIPHER_NEWCTX, (CRYPT_EAL_ImplCipherNewCtx)CRYPT_EAL_SmCipherNewCtx},
+    {CRYPT_EAL_IMPLCIPHER_INITCTX, (CRYPT_EAL_ImplCipherInitCtx)MODES_HCTR_InitCtxEx},
+    {CRYPT_EAL_IMPLCIPHER_UPDATE, (CRYPT_EAL_ImplCipherUpdate)MODES_HCTR_Update},
+    {CRYPT_EAL_IMPLCIPHER_FINAL, (CRYPT_EAL_ImplCipherFinal)MODES_HCTR_Final},
+    {CRYPT_EAL_IMPLCIPHER_DEINITCTX, (CRYPT_EAL_ImplCipherDeinitCtx)MODES_HCTR_DeInitCtx},
+    {CRYPT_EAL_IMPLCIPHER_CTRL, (CRYPT_EAL_ImplCipherCtrl)MODES_HCTR_Ctrl},
+    {CRYPT_EAL_IMPLCIPHER_FREECTX, (CRYPT_EAL_ImplCipherFreeCtx)MODES_HCTR_FreeCtx},
 #endif
     CRYPT_EAL_FUNC_END,
 };

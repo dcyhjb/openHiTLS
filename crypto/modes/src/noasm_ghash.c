@@ -14,7 +14,7 @@
  */
 
 #include "hitls_build.h"
-#ifdef HITLS_CRYPTO_GCM
+#if defined(HITLS_CRYPTO_GCM) || defined(HITLS_CRYPTO_HCTR)
 
 #include "bsl_sal.h"
 #include "crypt_utils.h"

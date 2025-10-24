@@ -26,6 +26,9 @@
 #include "crypt_modes_ofb.h"
 #include "crypt_modes_cfb.h"
 #include "crypt_modes_xts.h"
+#ifdef HITLS_CRYPTO_HCTR
+#include "crypt_modes_hctr.h"
+#endif
 #include "crypt_local_types.h"
 #include "crypt_errno.h"
 #include "bsl_err_internal.h"
@@ -180,6 +183,11 @@ CIPHER_NewCtx_FUNC(CHACHA20POLY1305)
 CIPHER_INIT_FUNC(MODES_CHACHA20POLY1305_InitCtx, MODES_CHACHA20POLY1305_Update, MODES_CHACHA20POLY1305_Final,
     MODES_CHACHA20POLY1305_DeInitCtx)
 
+#ifdef HITLS_CRYPTO_HCTR
+CIPHER_NewCtx_FUNC(HCTR)
+CIPHER_INIT_FUNC(MODES_HCTR_InitCtxEx, MODES_HCTR_Update, MODES_HCTR_Final, MODES_HCTR_DeInitCtx)
+#endif
+
 const CRYPT_EAL_Func g_isoCbc[] = {
 #ifdef HITLS_CRYPTO_CBC
     {CRYPT_EAL_IMPLCIPHER_NEWCTX, (CRYPT_EAL_ImplCipherNewCtx)MODES_CBC_NewCtxWrapper},
@@ -293,6 +301,19 @@ const CRYPT_EAL_Func g_isoXts[] = {
     {CRYPT_EAL_IMPLCIPHER_DEINITCTX, (CRYPT_EAL_ImplCipherDeinitCtx)MODES_XTS_DeInitCtxWrapper},
     {CRYPT_EAL_IMPLCIPHER_CTRL, (CRYPT_EAL_ImplCipherCtrl)MODES_XTS_CtrlWrapper},
     {CRYPT_EAL_IMPLCIPHER_FREECTX, (CRYPT_EAL_ImplCipherFreeCtx)MODES_XTS_FreeCtxWrapper},
+#endif
+    CRYPT_EAL_FUNC_END,
+};
+
+const CRYPT_EAL_Func g_isoHctr[] = {
+#ifdef HITLS_CRYPTO_HCTR
+    {CRYPT_EAL_IMPLCIPHER_NEWCTX, (CRYPT_EAL_ImplCipherNewCtx)MODES_HCTR_NewCtxWrapper},
+    {CRYPT_EAL_IMPLCIPHER_INITCTX, (CRYPT_EAL_ImplCipherInitCtx)MODES_HCTR_InitCtxExWrapper},
+    {CRYPT_EAL_IMPLCIPHER_UPDATE, (CRYPT_EAL_ImplCipherUpdate)MODES_HCTR_UpdateWrapper},
+    {CRYPT_EAL_IMPLCIPHER_FINAL, (CRYPT_EAL_ImplCipherFinal)MODES_HCTR_FinalWrapper},
+    {CRYPT_EAL_IMPLCIPHER_DEINITCTX, (CRYPT_EAL_ImplCipherDeinitCtx)MODES_HCTR_DeInitCtxWrapper},
+    {CRYPT_EAL_IMPLCIPHER_CTRL, (CRYPT_EAL_ImplCipherCtrl)MODES_HCTR_CtrlWrapper},
+    {CRYPT_EAL_IMPLCIPHER_FREECTX, (CRYPT_EAL_ImplCipherFreeCtx)MODES_HCTR_FreeCtxWrapper},
 #endif
     CRYPT_EAL_FUNC_END,
 };

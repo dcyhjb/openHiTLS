@@ -97,6 +97,7 @@ extern const CRYPT_EAL_Func g_isoEcb[];
 extern const CRYPT_EAL_Func g_isoGcm[];
 extern const CRYPT_EAL_Func g_isoOfb[];
 extern const CRYPT_EAL_Func g_isoXts[];
+extern const CRYPT_EAL_Func g_isoHctr[];
 extern const CRYPT_EAL_Func g_isoMlKem[];
 
 extern const CRYPT_EAL_Func g_isoSelftest[];

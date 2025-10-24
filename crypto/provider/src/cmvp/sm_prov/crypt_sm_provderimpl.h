@@ -62,6 +62,7 @@ extern const CRYPT_EAL_Func g_smEcb[];
 extern const CRYPT_EAL_Func g_smGcm[];
 extern const CRYPT_EAL_Func g_smOfb[];
 extern const CRYPT_EAL_Func g_smXts[];
+extern const CRYPT_EAL_Func g_smHctr[];
 
 extern const CRYPT_EAL_Func g_smSelftest[];
 

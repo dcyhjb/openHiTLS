@@ -17,7 +17,8 @@
 #if (defined(HITLS_CRYPTO_AES) || defined(HITLS_CRYPTO_SM4) || defined(HITLS_CRYPTO_CHACHA20) || \
     defined(HITLS_CRYPTO_CHACHA20POLY1305) || defined(HITLS_CRYPTO_XTS) || defined(HITLS_CRYPTO_CBC) || \
     defined(HITLS_CRYPTO_CCM) || defined(HITLS_CRYPTO_CFB) || defined(HITLS_CRYPTO_ECB) || \
-    defined(HITLS_CRYPTO_GCM) || defined(HITLS_CRYPTO_OFB) || defined(HITLS_CRYPTO_CTR)) && \
+    defined(HITLS_CRYPTO_GCM) || defined(HITLS_CRYPTO_OFB) || defined(HITLS_CRYPTO_CTR) || \
+    defined(HITLS_CRYPTO_HCTR)) && \
     defined(HITLS_CRYPTO_PROVIDER)
 
 #include "crypt_errno.h"
@@ -33,6 +34,7 @@
 #include "crypt_modes_ofb.h"
 #include "crypt_modes_cfb.h"
 #include "crypt_modes_xts.h"
+#include "crypt_modes_hctr.h"
 #include "crypt_local_types.h"
 #include "crypt_default_provider.h"
 
@@ -129,6 +131,10 @@ static void *GetNewCtxFunc(int32_t algId)
 #if defined(HITLS_CRYPTO_CHACHA20) && defined(HITLS_CRYPTO_CHACHA20POLY1305)
         case CRYPT_CIPHER_CHACHA20_POLY1305:
             return MODES_CHACHA20POLY1305_NewCtxEx;
+#endif
+#if defined(HITLS_CRYPTO_HCTR) && defined(HITLS_CRYPTO_SM4)
+        case CRYPT_CIPHER_SM4_HCTR:
+            return MODES_HCTR_NewCtxEx;
 #endif
         default:
             return NULL;
@@ -265,6 +271,19 @@ const CRYPT_EAL_Func g_defEalXts[] = {
     {CRYPT_EAL_IMPLCIPHER_DEINITCTX, (CRYPT_EAL_ImplCipherDeinitCtx)MODES_XTS_DeInitCtx},
     {CRYPT_EAL_IMPLCIPHER_CTRL, (CRYPT_EAL_ImplCipherCtrl)MODES_XTS_Ctrl},
     {CRYPT_EAL_IMPLCIPHER_FREECTX, (CRYPT_EAL_ImplCipherFreeCtx)MODES_XTS_FreeCtx},
+    CRYPT_EAL_FUNC_END,
+};
+#endif
+
+#ifdef HITLS_CRYPTO_HCTR
+const CRYPT_EAL_Func g_defEalHctr[] = {
+    {CRYPT_EAL_IMPLCIPHER_NEWCTX, (CRYPT_EAL_ImplCipherNewCtx)CRYPT_EAL_DefCipherNewCtx},
+    {CRYPT_EAL_IMPLCIPHER_INITCTX, (CRYPT_EAL_ImplCipherInitCtx)MODES_HCTR_InitCtxEx},
+    {CRYPT_EAL_IMPLCIPHER_UPDATE, (CRYPT_EAL_ImplCipherUpdate)MODES_HCTR_Update},
+    {CRYPT_EAL_IMPLCIPHER_FINAL, (CRYPT_EAL_ImplCipherFinal)MODES_HCTR_Final},
+    {CRYPT_EAL_IMPLCIPHER_DEINITCTX, (CRYPT_EAL_ImplCipherDeinitCtx)MODES_HCTR_DeInitCtx},
+    {CRYPT_EAL_IMPLCIPHER_CTRL, (CRYPT_EAL_ImplCipherCtrl)MODES_HCTR_Ctrl},
+    {CRYPT_EAL_IMPLCIPHER_FREECTX, (CRYPT_EAL_ImplCipherFreeCtx)MODES_HCTR_FreeCtx},
     CRYPT_EAL_FUNC_END,
 };
 #endif
